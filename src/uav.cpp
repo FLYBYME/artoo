@@ -299,7 +299,7 @@ void UAV::rcOverRide(HostProtocol::Packet &p)
 		sysid, 1,
 		channels[1], channels[2], channels[0], channels[3],
 		channels[4], channels[5], channels[6], channels[7]
-		//, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000
+		, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000
 	);
 
 
