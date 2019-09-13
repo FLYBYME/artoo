@@ -13,7 +13,8 @@ public:
     enum SysState {
         Boot,       // battery check or charger connected notification
         Idle,       // asleep/charging
-        Running,    // normal operation
+		Running,    // normal operation
+		ShuttingDown,    // normal operation
     };
 
     static void init();

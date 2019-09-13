@@ -3,7 +3,7 @@
 #include "dsm.h"
 #include "params.h"
 #include "board.h"
-#include "ui.h"
+#include "uav.h"
 
 #include "stm32/gpio.h"
 #include "stm32/adc.h"
@@ -145,28 +145,11 @@ bool Inputs::producePacket(HostProtocol::Packet &pkt)
 
     // RC channels to be forwarded to the vehicle, don't send any values (to trigger RCFailsafe) if getting any invalid values from flight sticks
     if (isFlightControlValid()) {
-        Dsm::instance.producePacket(pkt);
+		UAV::instance1.rcOverRide(pkt);
+		//UAV::instance2.rcOverRide(pkt);
+		//UAV::instance3.rcOverRide(pkt);
     }
 
-    // additional inputs that 3rd parties may be interested in
-    uint16_t batt = Battery::instance.level();
-
-    pkt.delimitSlip();
-    pkt.appendSlip(HostProtocol::InputReport);
-    pkt.appendItemSlip(sticks[Io::StickGimbalY].scaledAngularValue());
-    pkt.appendItemSlip(sticks[Io::StickGimbalRate].scaledLinearValue());
-    pkt.appendItemSlip(batt);
-    pkt.delimitSlip();
-
-    // usually only enabled for testing purposes
-    if (rawIoEnabled) {
-        pkt.delimitSlip();
-        pkt.appendSlip(HostProtocol::RawIoReport);
-        pkt.appendSlip(adcSamples, sizeof(adcSamples));
-        uint16_t buttonMask = ButtonManager::pressMask();
-        pkt.appendSlip(&buttonMask, sizeof(buttonMask));
-        pkt.delimitSlip();
-    }
 
     return true;
 }
@@ -304,14 +287,14 @@ void Inputs::pendInvalidStickAlert(Io::AdcID id)
 
     if (isFlightControl(mapped_id)) {
         if (!isFlightControlValid()) {
-            Ui::instance.pendEvent(Event::ControllerValueOutOfRange);
+            //Ui::instance.pendEvent(Event::ControllerValueOutOfRange);
         }
         return;
     }
 
     if (isCameraControl(mapped_id)) {
         if (!isCameraControlValid()) {
-            Ui::instance.pendEvent(Event::CamControlValueOutOfRange);
+            //Ui::instance.pendEvent(Event::CamControlValueOutOfRange);
         }
         return;
     }
@@ -326,7 +309,7 @@ void Inputs::initStickValidState()
 void Inputs::resetInvalidStickError()
 {
     initStickValidState();
-    Ui::instance.alertManager.dismissInvalidStickAlerts();
+    //Ui::instance.alertManager.dismissInvalidStickAlerts();
 }
 
 void Inputs::onCalibrationApplied()

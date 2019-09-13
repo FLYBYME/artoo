@@ -2,7 +2,6 @@
 // Original code by Jason Short.
 
 #include "stickaxis.h"
-#include "ui.h"
 #include "inputs.h"
 
 #include "stm32/common.h"
@@ -102,7 +101,7 @@ unsigned StickAxis::defaultExpo() const
         return 40;
 
     case Io::StickGimbalY:
-        return 100;
+        return 10;
 
     default:
         return DefaultExpo;

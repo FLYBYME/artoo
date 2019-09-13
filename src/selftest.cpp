@@ -1,5 +1,4 @@
 #include "selftest.h"
-#include "flightmanager.h"
 #include "board.h"
 
 #include "stm32/sys.h"
@@ -29,9 +28,9 @@ void SelfTest::checkForShorts()
      */
 
     // only want to do this in the factory, really
-    if (FlightManager::instance.linkIsConnected()) {
-        return;
-    }
+    //if (FlightManager::instance.linkIsConnected()) {
+    //    return;
+    //}
 
     GPIOPin displayConnectorPins[] = {
         DISPLAY_GPIO_NOE,

@@ -1,6 +1,6 @@
 #include "idletimeout.h"
 #include "powermanager.h"
-#include "ui.h"
+
 #include "buttonmanager.h"
 #include "haptic.h"
 
@@ -39,13 +39,13 @@ bool IdleTimeout::enabled()
         return false;
     }
 
-    if (Ui::instance.state() == Ui::Updater) {
-        return false;
-    }
+    //if (Ui::instance.state() == Ui::Updater) {
+    //    return false;
+    //}
 
-    if (FlightManager::instance.linkIsConnected()) {
-        return false;
-    }
+    //if (FlightManager::instance.linkIsConnected()) {
+    //    return false;
+    //}
 
     return true;
 }
@@ -59,7 +59,7 @@ void IdleTimeout::tick()
 
     switch (++ticker) {
     case IDLE_WARN:
-        Ui::instance.pendEvent(Event::SystemIdleWarning);
+        //Ui::instance.pendEvent(Event::SystemIdleWarning);
         break;
 
     case IDLE_TIMEOUT:
@@ -70,9 +70,9 @@ void IdleTimeout::tick()
 
 void IdleTimeout::reset()
 {
-    if (Ui::instance.alertManager.currentEvent() == Event::SystemIdleWarning) {
-        Ui::instance.alertManager.dismiss();
-    }
+   // if (Ui::instance.alertManager.currentEvent() == Event::SystemIdleWarning) {
+    //    Ui::instance.alertManager.dismiss();
+    //}
 
     ticker = 0;
 }

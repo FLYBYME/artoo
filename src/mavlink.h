@@ -4,12 +4,19 @@
 #include "mavlink/c_library/ardupilotmega/mavlink.h"
 #include "mavlink/c_library/common/mavlink.h"
 
+
+#include "stm32/common.h"
+#include "stm32/systime.h"
+
 #include "hostprotocol.h"
+#include "uav.h"
 
 class Mavlink
 {
 public:
     Mavlink();    // do no implement
+
+	static Mavlink instance;
 
     static const uint8_t ArtooSysID             = 0xff; // default sysid pixhawk looks for
     static const uint8_t ArtooComponentID       = MAV_TYPE_GCS;
@@ -25,6 +32,8 @@ public:
 
     static void onMavlinkData(const uint8_t *bytes, unsigned len);
     static void packetizeMsg(HostProtocol::Packet &p, const mavlink_message_t *msg);
+
+	bool producePacket(HostProtocol::Packet &p);
 
 private:
 
@@ -42,6 +51,8 @@ private:
 
     static mavlink_message_t currentMsg;
     static mavlink_status_t status;
+
+	SysTime::Ticks syncDeadline;
 };
 
 #endif // _MAVLINK_H

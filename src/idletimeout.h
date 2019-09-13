@@ -17,7 +17,7 @@ private:
     IdleTimeout(); // don't implement
 
     // shutdown after 10 minutes of no user input
-    static const unsigned IDLE_WARN     = Tasks::HEARTBEAT_HZ * 60 * 10;
+    static const unsigned IDLE_WARN     = Tasks::HEARTBEAT_HZ * 60 * 60;
     static const unsigned IDLE_TIMEOUT  = IDLE_WARN + Tasks::HEARTBEAT_HZ * 7;
 
     static bool enabled();

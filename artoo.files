@@ -1,3 +1,5 @@
+
+
 src/main.cpp
 src/ldscript.ld
 src/exti.cpp
@@ -432,3 +434,10 @@ src/mavlink.h
 src/mavlink.cpp
 src/sologimbal.h
 src/sologimbal.cpp
+
+
+
+src/topbar/topbar.h
+src/topbar/topbar.cpp
+src/topbar/battery.h
+src/topbar/battery.cpp

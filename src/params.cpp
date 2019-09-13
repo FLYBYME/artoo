@@ -1,5 +1,4 @@
 #include "params.h"
-#include "flightmanager.h"
 
 #include <string.h>
 #include "stm32/mcuflash.h"
@@ -63,12 +62,12 @@ void Params::periodicWork()
      * Sync our params if needed every SYNC_MILLIS.
      */
 
-    if (FlightManager::instance.armed()) {
-        // We never want to sync when the vehicle is armed,
-        // since the process of writing to internal flash can stall
-        // the CPU long enough to drop bytes over the UART.
-        return;
-    }
+    //if (FlightManager::instance.armed()) {
+    //    // We never want to sync when the vehicle is armed,
+    //    // since the process of writing to internal flash can stall
+    //    // the CPU long enough to drop bytes over the UART.
+    //    return;
+    //}
 
     const SysTime::Ticks now = SysTime::now();
     if (now > syncDeadline) {

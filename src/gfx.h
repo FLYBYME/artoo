@@ -160,7 +160,10 @@ public:
 
     static uint16_t stringWidth(const char *s, const FontAsset & font);
     static uint16_t stringWidth(const char *s, const char *s_end, const FontAsset & font);
-    static uint16_t write(uint16_t x, uint16_t y, const char *s, const FontAsset & font);
+	static uint16_t write(uint16_t x, uint16_t y, const int value);
+	static uint16_t write(uint16_t x, uint16_t y, const int value, const FontAsset & font);
+	static uint16_t write(uint16_t x, uint16_t y, const char *s);
+	static uint16_t write(uint16_t x, uint16_t y, const char *s, const FontAsset & font);
     static uint16_t write(uint16_t x, uint16_t y, const char *s, const char *s_end, const FontAsset & font);
     static uint16_t write(uint16_t x, uint16_t y, const char *s, const FontAsset & font, uint16_t *color_fg, uint16_t *color_bg);
     static uint16_t write(uint16_t x, uint16_t y, const char *s, const char *s_end, const FontAsset & font, uint16_t *color_fg, uint16_t *color_bg);

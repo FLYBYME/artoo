@@ -52,7 +52,8 @@ public:
         TestEvent,          // debug only for testing event behaviours
         SetTelemUnits,      // set telemetry units to metric/imperial
         InvalidStickInputs, // out of range stick values received
-        SoloAppConnection,  // solo app connection status (connected/disconnected)
+		SoloAppConnection,  // solo app connection status (connected/disconnected)
+		RequestRC,  // solo app connection status (connected/disconnected)
     };
 
     // mavlink packets set the upper bound of our size here

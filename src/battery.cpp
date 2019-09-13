@@ -4,7 +4,6 @@
 
 #include "powermanager.h"
 #include "tasks.h"
-#include "ui.h"
 #include "haptic.h"
 #include "machine.h"
 #include "stm32/gpio.h"
@@ -99,7 +98,7 @@ void Battery::onCellSamples(uint16_t bottom, uint16_t top, uint16_t therm, uint1
     PackID pid = packID(cellId);
     if (id != pid) {
         if (batteryIsPresent() && pid == Unknown) {
-            Ui::instance.pendEvent(Event::UnknownBattery);
+            //Ui::instance.pendEvent(Event::UnknownBattery);
         }
         id = pid;
     }
@@ -122,9 +121,9 @@ void Battery::onCellSamples(uint16_t bottom, uint16_t top, uint16_t therm, uint1
 
     bool cp = chargerIsPresent();
     if (chgPresentState != cp) {
-        Ui::instance.pendEvent(Event::ChargerConnChanged);
+        //Ui::instance.pendEvent(Event::ChargerConnChanged);
         if (cp) {
-            Ui::instance.pendEvent(Event::ChargerConnected);
+            //Ui::instance.pendEvent(Event::ChargerConnected);
         }
         chgPresentState = cp;
     }
@@ -202,45 +201,45 @@ void Battery::onLevelChanged(unsigned lvl)
      * Notify UI as appropriate.
      */
 
-    Ui & ui = Ui::instance;
-    ui.pendEvent(Event::ArtooBatteryChanged);
+   // Ui & ui = Ui::instance;
+    //ui.pendEvent(Event::ArtooBatteryChanged);
 
     // pend a lockout alert if controller battery reaches low and failsafe levels
-    if (!chargerIsPresent()) {
-        if (uiLevel() <= FAILSAFE_PERCENT) {
-            const Telemetry & telemVals = FlightManager::instance.telemVals();
-            if (telemVals.hasGpsFix()) {
-                ui.pendEvent(Event::ControllerBatteryFailsafe);
-            } else {
-                ui.pendEvent(Event::ControllerBatteryFailsafeNoGps);
-            }
-            return;
-        }
-
-        if (uiLevel() <= CRITICALLY_LOW_PERCENT) {
-            ui.pendEvent(Event::ControllerBatteryCritical);
-            return;
-        }
-    }
-
-    // dismiss controller battery alerts if new level is OK, failsafe battery alert should not be dismissed
-    struct BattLevelAlert {
-        Event::ID event;
-        unsigned level;
-    } const battLevelAlertDismissals[] = {
-        { Event::ControllerBatteryTooLowForTakeoff, DISMISS_TOO_LOW_TO_FLY },
-        { Event::ControllerBatteryCritical, CRITICALLY_LOW_PERCENT },
-    };
-
-    for (unsigned i = 0; i < arraysize(battLevelAlertDismissals); ++i) {
-        const BattLevelAlert & bla = battLevelAlertDismissals[i];
-        if (ui.alertManager.currentEvent() == bla.event) {
-            if (chargerIsPresent() || lvl > bla.level) {
-                ui.alertManager.dismiss();
-                break;
-            }
-        }
-    }
+//    if (!chargerIsPresent()) {
+//        if (uiLevel() <= FAILSAFE_PERCENT) {
+//            const Telemetry & telemVals = FlightManager::instance.telemVals();
+//            if (telemVals.hasGpsFix()) {
+//                ui.pendEvent(Event::ControllerBatteryFailsafe);
+//            } else {
+//                ui.pendEvent(Event::ControllerBatteryFailsafeNoGps);
+//            }
+//            return;
+//        }
+//
+//        if (uiLevel() <= CRITICALLY_LOW_PERCENT) {
+//            ui.pendEvent(Event::ControllerBatteryCritical);
+//            return;
+//        }
+//    }
+//
+//    // dismiss controller battery alerts if new level is OK, failsafe battery alert should not be dismissed
+//    struct BattLevelAlert {
+//        Event::ID event;
+//        unsigned level;
+//    } const battLevelAlertDismissals[] = {
+//        { Event::ControllerBatteryTooLowForTakeoff, DISMISS_TOO_LOW_TO_FLY },
+//        { Event::ControllerBatteryCritical, CRITICALLY_LOW_PERCENT },
+//    };
+//
+//    for (unsigned i = 0; i < arraysize(battLevelAlertDismissals); ++i) {
+//        const BattLevelAlert & bla = battLevelAlertDismissals[i];
+//        if (ui.alertManager.currentEvent() == bla.event) {
+//            if (chargerIsPresent() || lvl > bla.level) {
+//                ui.alertManager.dismiss();
+//                break;
+//            }
+//        }
+//    }
 }
 
 void Battery::doBalancing(uint16_t bottom, uint16_t top)
@@ -268,7 +267,7 @@ void Battery::checkTherm()
     if (!thermalChgLockout) {
         if (thermal < THERMAL_CHG_LIMIT) {
             thermalChgLockout = true;
-            Ui::instance.pendEvent(Event::BatteryThermalLimitExceeded);
+            //Ui::instance.pendEvent(Event::BatteryThermalLimitExceeded);
         }
     }
 }

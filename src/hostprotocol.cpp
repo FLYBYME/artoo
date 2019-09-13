@@ -1,11 +1,8 @@
-#include "cameracontrol.h"
+
 #include "hostprotocol.h"
 #include "inputs.h"
 #include "params.h"
 #include "tasks.h"
-#include "flightmanager.h"
-#include "vehicleconnector.h"
-#include "powermanager.h"
 #include "buttonmanager.h"
 #include "buttonfunction.h"
 #include "lockout.h"
@@ -14,8 +11,7 @@
 #include "version.h"
 #include "mavlink.h"
 #include "board.h"
-#include "ui.h"
-#include "ui_events.h" // Debugging only
+#include "powermanager.h"
 
 #include "stm32/gpio.h"
 #include "stm32/sys.h"
@@ -131,21 +127,30 @@ bool HostProtocol::dispatchProduce()
         return true;
     }
 
-    if (ButtonManager::producePacket(txPacket)) {
-        return true;
-    }
+	if (ButtonManager::producePacket(txPacket)) {
+		return true;
+	}
+	if (Mavlink::instance.producePacket(txPacket)) {
+		return true;
+	}
 
     if (Inputs::producePacket(txPacket)) {
         return true;
     }
 
-    if (FlightManager::instance.producePacket(txPacket)) {
-        return true;
-    }
+	if (UAV::instance1.producePacket(txPacket)) {
+		return true;
+	}
+	if (UAV::instance2.producePacket(txPacket)) {
+		return true;
+	}
+	if (UAV::instance3.producePacket(txPacket)) {
+		return true;
+	}
 
-    if (VehicleConnector::instance.producePacket(txPacket)) {
-        return true;
-    }
+    //if (VehicleConnector::instance.producePacket(txPacket)) {
+    //    return true;
+    //}
 
     if (PowerManager::producePacket(txPacket)) {
         return true;
@@ -316,16 +321,16 @@ void HostProtocol::processPacket(const Packet &p)
 
     case Calibrate:
         // don't apply stick calibration changes while armed
-        if (!FlightManager::instance.armed()) {
-            Params::StoredValues &sv = Params::sys.storedValues;
-            if (p.payloadLen() >= sizeof(sv.sticks)) {
-                memcpy(sv.sticks, &bytes[1], sizeof(sv.sticks));
-
-                // dismiss any previous stick-related error alerts, load params
-                Inputs::onCalibrationApplied();
-                Params::sys.mark();
-            }
-        }
+//        if (!FlightManager::instance.armed()) {
+//            Params::StoredValues &sv = Params::sys.storedValues;
+//            if (p.payloadLen() >= sizeof(sv.sticks)) {
+//                memcpy(sv.sticks, &bytes[1], sizeof(sv.sticks));
+//
+//                // dismiss any previous stick-related error alerts, load params
+//                Inputs::onCalibrationApplied();
+//                Params::sys.mark();
+//            }
+//        }
         break;
 
     case ConfigSweepTime:{
@@ -333,7 +338,7 @@ void HostProtocol::processPacket(const Packet &p)
 
         if (p.payloadLen() >= sizeof(sv.sweepConfig)){
             memcpy(&sv.sweepConfig, &bytes[1], sizeof(sv.sweepConfig));
-            CameraControl::instance.setSweepConfig(sv.sweepConfig);
+            //CameraControl::instance.setSweepConfig(sv.sweepConfig);
             Params::sys.mark();
         }
 
@@ -341,14 +346,14 @@ void HostProtocol::processPacket(const Packet &p)
 
     case ConfigStickAxes:
         // don't apply stick axis changes while armed
-        if (!FlightManager::instance.armed()) {
-            Params::StoredValues &sv = Params::sys.storedValues;
-            if (p.payloadLen() >= sizeof(sv.rcSticks)) {
-                memcpy(sv.rcSticks, &bytes[1], sizeof sv.rcSticks);
-                Inputs::loadStickParams();
-                Params::sys.mark();
-            }
-        }
+//        if (!FlightManager::instance.armed()) {
+//            Params::StoredValues &sv = Params::sys.storedValues;
+//            if (p.payloadLen() >= sizeof(sv.rcSticks)) {
+//                memcpy(sv.rcSticks, &bytes[1], sizeof sv.rcSticks);
+//                Inputs::loadStickParams();
+//                Params::sys.mark();
+//            }
+//        }
         break;
 
     case ButtonFunctionCfg:
@@ -358,7 +363,7 @@ void HostProtocol::processPacket(const Packet &p)
 
             if (ButtonManager::setButtonFunction(id, pcfg)) {
                 Params::sys.mark();
-                Ui::instance.pendEvent(Event::ButtonFunctionUpdated);
+                //Ui::instance.pendEvent(Event::ButtonFunctionUpdated);
             }
         }
         break;
@@ -368,11 +373,11 @@ void HostProtocol::processPacket(const Packet &p)
         break;
 
     case PairRequest:
-        VehicleConnector::instance.onPairingRequest(&bytes[1], p.payloadLen());
+        //VehicleConnector::instance.onPairingRequest(&bytes[1], p.payloadLen());
         break;
 
     case PairResult:
-        VehicleConnector::instance.onPairingResult(&bytes[1], p.payloadLen());
+        //VehicleConnector::instance.onPairingResult(&bytes[1], p.payloadLen());
         break;
 
     case OutputTest:
@@ -380,9 +385,9 @@ void HostProtocol::processPacket(const Packet &p)
         break;
 
     case SetShotInfo: {
-        const char *si = reinterpret_cast<const char*>(&bytes[1]);
-        Ui::instance.gimbal.onShotChanged(si);
-        Ui::instance.topBar.onShotChanged(si);
+        //const char *si = reinterpret_cast<const char*>(&bytes[1]);
+        //Ui::instance.gimbal.onShotChanged(si);
+        //Ui::instance.topBar.onShotChanged(si);
     } break;
 
     case Updater:
@@ -410,26 +415,29 @@ void HostProtocol::processPacket(const Packet &p)
 
     case TestEvent:
         if (p.payloadLen() >= 1){
-            if (Event::isValid(bytes[1])) {
-                Event::ID event = static_cast<Event::ID>(bytes[1]);
-                Ui::instance.pendEvent(event);
-            } else {
-                DBG(("[host_protocol.cpp] Received event is invalid.\n"));
-            }
+            //if (Event::isValid(bytes[1])) {
+                //Event::ID event = static_cast<Event::ID>(bytes[1]);
+                //Ui::instance.pendEvent(event);
+            //} else {
+            //    DBG(("[host_protocol.cpp] Received event is invalid.\n"));
+            //}
         }
         break;
 
     case SetTelemUnits:
         if (p.payloadLen() >= 1){
-            Ui::instance.telem.onUnitsChanged(bytes[1]);
+            //Ui::instance.telem.onUnitsChanged(bytes[1]);
         }
         break;
 
-    case SoloAppConnection: // TODO: If there's more of these iMX6->STM32 type alerts we chould think about combining them all together, leaving like this for now
-        if (p.payloadLen() >= 1){
-            Ui::instance.telem.onSoloAppConnChanged(bytes[1]);
-        }
-        break;
+	case SoloAppConnection: // TODO: If there's more of these iMX6->STM32 type alerts we chould think about combining them all together, leaving like this for now
+		if (p.payloadLen() >= 1) {
+			//Ui::instance.telem.onSoloAppConnChanged(bytes[1]);
+		}
+		break;
+	case RequestRC:
+		UAV::instance1.requestRC();
+		break;
     }
 }
 
@@ -442,7 +450,7 @@ void HostProtocol::onUpdaterMsg(const uint8_t *bytes, unsigned len)
         case 0: // begin
         case 1: // success
         case 2: // fail
-            Ui::instance.pendEvent(static_cast<Event::ID>(Event::SystemUpdateBegin + bytes[0]));
+            //Ui::instance.pendEvent(static_cast<Event::ID>(Event::SystemUpdateBegin + bytes[0]));
             break;
         }
     }

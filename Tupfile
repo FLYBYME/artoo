@@ -37,7 +37,7 @@ CXXFLAGS  += -fno-exceptions -fno-threadsafe-statics -fno-rtti
 # C & C++ preprocessor common flags
 
 CPPFLAGS  += -Os -ggdb
-CPPFLAGS  += -Wall -Werror -Wundef
+CPPFLAGS  += -Wall -Wundef
 CPPFLAGS  += -DMAVLINK_COMM_NUM_BUFFERS=1
 ifeq ($(SEMIHOSTING),yes)
 CPPFLAGS  += -DSEMIHOSTING

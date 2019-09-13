@@ -12,18 +12,26 @@
 #include "stm32/pwr.h"
 #include "stm32/bkp.h"
 
-#include "ui.h"
 #include "inputs.h"
 #include "tasks.h"
 #include "haptic.h"
 #include "buzzer.h"
-#include "cameracontrol.h"
 #include "hostprotocol.h"
+#include "telemetry.h"
 #include "buttonmanager.h"
 #include "battery.h"
 #include "powermanager.h"
 #include "board.h"
 
+
+
+#include "ui.h"
+#include "uav.h"
+
+void cb() {
+
+}
+static const char lut[] = "0123456789abcdef";
 int main()
 {
     // enable power manager first, to ensure we stay turned on
@@ -61,11 +69,8 @@ int main()
 
     HostProtocol::instance.init();
     ButtonManager::init();
+
     Ui::instance.init();
-
-    CameraControl::instance.init();
-    FlightManager::instance.init();
-
     // ensure our ADC values are initialized as soon as possible
     Inputs::init();
     Haptic::init();
@@ -75,9 +80,18 @@ int main()
     // for now, initial values in backup registers are only
     // available during boot. cleared as we enter the task loop.
     Bkp::reset();
+    ButtonManager::buttons[Io::ButtonPower].setLedActive();
+    Ui::instance.setBacklightsForState(PowerManager::Running);
+	UAV::instance1.setActive(true);
+	UAV::instance2.setActive(false);
+	UAV::instance3.setActive(false);
 
+	Usart u = Usart(&USART3, cb);
+
+	u.init(GPIOPin(&GPIOB, 11), GPIOPin(&GPIOB, 10), 115200, true);
     for (;;) {
         if (!Tasks::work()) {
+			//u.write("a");
             Sys::waitForInterrupt();
         }
     }

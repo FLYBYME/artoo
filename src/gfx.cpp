@@ -3,6 +3,8 @@
 #include "resources-gen.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 const unsigned Gfx::WIDTH = ILI9341Parallel::WIDTH;
 const unsigned Gfx::HEIGHT = ILI9341Parallel::HEIGHT;
@@ -175,9 +177,30 @@ void Gfx::drawBitmapBytes(int16_t x, int16_t y, ImageFormat fmt, const ImagePale
     }
 }
 
+
+
+
+
+uint16_t Gfx::write(uint16_t x, uint16_t y, const int value)
+{
+	char s[32];
+	sprintf(s, "%d", value);
+	return write(x, y, s, Montserrat, NULL, NULL);
+}
+uint16_t Gfx::write(uint16_t x, uint16_t y, const int value, const FontAsset & font)
+{
+	char s[32];
+	sprintf(s, "%d", value);
+	return write(x, y, s, font, NULL, NULL);
+}
+
+uint16_t Gfx::write(uint16_t x, uint16_t y, const char *s)
+{
+	return write(x, y, s, Montserrat, NULL, NULL);
+}
 uint16_t Gfx::write(uint16_t x, uint16_t y, const char *s, const FontAsset & font)
 {
-    return write(x, y, s, font, NULL, NULL);
+	return write(x, y, s, font, NULL, NULL);
 }
 
 uint16_t Gfx::write(uint16_t x, uint16_t y, const char *s,  const char *s_end, const FontAsset & font)

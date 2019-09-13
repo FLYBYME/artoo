@@ -1,6 +1,5 @@
 #include "buttonfunction.h"
 #include "haptic.h"
-#include "flightmanager.h"
 #include "params.h"
 
 ButtonFunction::Config & ButtonFunction::get(Io::ButtonID id) {
@@ -19,9 +18,9 @@ void ButtonFunction::onButtonEvent(Button *b, Button::Event e)
      * that an action that *could* be available is not at the moment.
      */
 
-    if (!FlightManager::instance.linkIsConnected()) {
-        return;
-    }
+    //if (!FlightManager::instance.linkIsConnected()) {
+    //    return;
+    //}
 
     if (!validId(b->id())) {
         return;

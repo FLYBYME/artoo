@@ -2,7 +2,6 @@
 #define BUTTON_MANAGER_H
 
 #include "button.h"
-#include "flightmanager.h"
 #include "hostprotocol.h"
 #include "ringbuffer.h"
 #include "buttonfunction.h"
@@ -16,7 +15,7 @@ public:
     static bool setButtonFunction(Io::ButtonID id, const ButtonFunction::Config * c);
     static void setBacklight(unsigned percent);
 
-    static void onFlightModeChanged(FlightManager::FlightMode fm);
+    //static void onFlightModeChanged(FlightManager::FlightMode fm);
 
     static bool producePacket(HostProtocol::Packet &p);
 
@@ -38,6 +37,7 @@ public:
 
     static void shutdown();
 
+    static Button buttons[];
 private:
     union ButtonEvent {
         uint8_t bytes[0];
@@ -48,7 +48,6 @@ private:
         };
     };
 
-    static Button buttons[];
     static uint16_t buttonPressMask;    // buttons currently being pressed
 
     static unsigned eventIdx;

@@ -1,17 +1,18 @@
 #include "tasks.h"
 #include "params.h"
-#include "cameracontrol.h"
 #include "hostprotocol.h"
 #include "inputs.h"
 #include "buttonmanager.h"
-#include "flightmanager.h"
-#include "sologimbal.h"
 #include "powermanager.h"
-#include "ui.h"
 #include "idletimeout.h"
 #include "haptic.h"
 #include "lockout.h"
 #include "ili9341parallel.h"
+
+
+
+#include "ui.h"
+#include "uav.h"
 
 #include "board.h"
 #include "stm32/gpio.h"
@@ -32,10 +33,10 @@ void Tasks::invoke(unsigned id)
     case FiftyHzHeartbeat:
         Inputs::fiftyHzWork();
         if (PowerManager::state() == PowerManager::Running) {
-            FlightManager::instance.sysHeartbeat();
-            SoloGimbal::instance.sysHeartbeat();
-            Ui::instance.alertManager.sysHeartbeat();
-            CameraControl::instance.fiftyHzLoop();
+            UAV::instance1.sysHeartbeat();
+            UAV::instance2.sysHeartbeat();
+            UAV::instance3.sysHeartbeat();
+            Ui::instance.update();
             Params::sys.periodicWork();
             IdleTimeout::tick();
         }
@@ -48,18 +49,12 @@ void Tasks::invoke(unsigned id)
          * by some other means.
          */
         if (ILI9341Parallel::lcd.ticksSinceLastTE() > SysTime::sTicks(1)) {
-            Ui::instance.update();
+            //Ui::instance.update();
         }
-#if (BOARD == BOARD_BB02)
-        // display updates are driven by the TE isr on BB02.5
-        // but we just try for 50Hz on BB02 since we don't
-        // have access to any synchronization info
-        Ui::instance.update();
-#endif
         break;
 
     case DisplayRender:
-        Ui::instance.update();
+        //Ui::instance.update();
         break;
 
     case ButtonHold:
@@ -71,7 +66,7 @@ void Tasks::invoke(unsigned id)
         break;
 
     case Camera:
-        CameraControl::instance.task();
+       // CameraControl::instance.task();
         break;
 
     case Shutdown:
